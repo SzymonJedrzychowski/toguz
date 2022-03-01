@@ -1,2 +1,2 @@
-game/__pychache__/
-agents/__pychache__/
+game/__pychache__/*
+agents/__pychache__/*
