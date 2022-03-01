@@ -1,5 +1,3 @@
-import ujson
-
 class gameState:
     def __init__(self, size):
         self.size = size
@@ -98,8 +96,7 @@ class gameState:
 
     def printBoard(self, done=False):
         print("---")
-        print("1: {}, -1: {}".format(self.score[1], self.score[-1]))
-        print("")
+        print("1: {}, -1: {}\n".format(self.score[1], self.score[-1]))
         for i in range(self.size):
             if self.tuz[1] == self.size*2-1-i:
                 print(" T", end = " ")
@@ -111,8 +108,7 @@ class gameState:
                 print(self.board[self.size*2-1-i], end = " ")
             else:
                 print(" {}".format(self.board[self.size*2-1-i]), end = " ")
-        print()
-        print()
+        print("\n")
         for i in range(self.size):
             if self.board[i] > 9:
                 print(self.board[i], end = " ")
@@ -124,23 +120,20 @@ class gameState:
                 print(" T", end = " ")
             else:
                 print(" {}".format(i), end = " ")
-        print()
-        print()
+        print("\n")
         if not done:
             print("Move of {}".format(self.currentPlayer))
 
     def createCopy(self):
-        newState = gameState(self.size)
-        thisStateDict = {"board": self.board, "currentPlayer": self.currentPlayer, "tuz": self.tuz, "score": self.score}
-        d = ujson.loads(ujson.dumps(thisStateDict))
-        newState.board = d["board"]
-        newState.currentPlayer = d["currentPlayer"]
-        newState.tuz = {
-            -1: d["tuz"]["-1"],
-            1: d["tuz"]["1"]
-        }
-        newState.score = {
-            -1: d["score"]["-1"],
-            1: d["score"]["1"]
-        }
-        return newState
+        toReturn = gameState(self.size)
+        toReturn.board = [i for i in self.board]
+        toReturn.tuz = {1: self.tuz[1], -1: self.tuz[-1]}
+        toReturn.score = {1: self.score[1], -1: self.score[-1]}
+        toReturn.currentPlayer = self.currentPlayer
+        return toReturn
+
+    def __eq__(self, other):
+        return self.board == other.board and self.currentPlayer == other.currentPlayer and self.tuz == other.tuz and self.score == other.score 
+
+    def __hash__(self):
+        return hash(":".join([str(j) for j in [i for i in self.board]+[self.score[-1], self.score[1], self.tuz[-1], self.tuz[1], self.currentPlayer]]))

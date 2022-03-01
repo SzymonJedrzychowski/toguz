@@ -1,32 +1,34 @@
 from game.toguzGame import gameState
-from agents import human, randomLegal, totalRandom, minMax, minMaxAB, mcts
+from agents import human, totalRandom, randomLegal, minMax, minMaxT, minMaxTI, minMaxAB, mcts
 
-env = gameState(9)
+GAME_SIZE = 5
+GAMES_NUMBER = 1
 
-agent = {
-    1: minMaxAB.agent(7),
-    -1: mcts.agent(25000, 3)
+playingAgents = {
+    1: mcts.agent(300),
+    -1: minMaxAB.agent(3)
 }
 
 results = []
 gameCount = 0
+env = gameState(GAME_SIZE)
 
-while gameCount < 1:
+while gameCount < GAMES_NUMBER:
     env.resetState()
     done = False
     while not done:
         env.printBoard()
-        a = agent[env.currentPlayer].findMove(env)
-        if a in env.getLegalMoves():
-            env.move(a)
+        calculatedMove = playingAgents[env.currentPlayer].findMove(env)
+        if calculatedMove in env.getLegalMoves():
+            env.move(calculatedMove)
             reward, score, done = env.ifTerminal()
             env.currentPlayer *= -1
         else:
             reward = -env.currentPlayer
             done = True
     env.printBoard(True)
-    print("RESULT: {}".format(reward))
     results.append(reward)
     gameCount += 1
 
-print(results.count(1), results.count(0), results.count(-1))
+print("RESULTS: 1W: {} - D: {} - -1W: {}".format(results.count(1),
+      results.count(0), results.count(-1)))

@@ -5,6 +5,7 @@ class agent:
     def findMove(self, env, depth=None):
         if depth == None:
             depth = self.globalDepth
+            self.transpositionTable = {}
 
         availableMoves = env.getLegalMoves()
         if env.currentPlayer == 1:
@@ -23,10 +24,20 @@ class agent:
                         value = reward
                         move = i
                 else:
-                    sim = self.findMove(newState, depth-1)
-                    if sim > value:
-                        value = sim
-                        move = i
+                    skipMinMax = False
+                    stateHash = hash(newState)
+                    if stateHash in self.transpositionTable:
+                        if self.transpositionTable[stateHash][0] >= depth:
+                            if self.transpositionTable[stateHash][1] > value:
+                                value = self.transpositionTable[stateHash][1]
+                                move = i
+                            skipMinMax = True
+                    if not skipMinMax:
+                        sim = self.findMove(newState, depth-1)
+                        self.transpositionTable[stateHash] = [depth, sim]
+                        if sim > value:
+                            value = sim
+                            move = i
             if self.globalDepth == depth:
                 return move
             return value
@@ -46,10 +57,21 @@ class agent:
                         value = reward
                         move = i
                 else:
-                    sim = self.findMove(newState, depth-1)
-                    if sim < value:
-                        value = sim
-                        move = i
+                    skipMinMax = False
+                    stateHash = hash(newState)
+                    if stateHash in self.transpositionTable:
+                        if self.transpositionTable[stateHash][0] >= depth:
+                            if self.transpositionTable[stateHash][1] < value:
+                                value = self.transpositionTable[stateHash][1]
+                                move = i
+                            skipMinMax = True
+                    if not skipMinMax:
+                        sim = self.findMove(newState, depth-1)
+                        self.transpositionTable[stateHash] = [depth, sim]
+                        if sim < value:
+                            value = sim
+                            move = i
+
             if self.globalDepth == depth:
                 return move
             return value

@@ -1,13 +1,11 @@
 import random
-import copy
 import math
-import matplotlib.pyplot as plt
-import time
 
 class agent:
     def __init__(self, maxI=10, c=1.41):
         self.maxI = maxI
         self.c = c
+
     def findMove(self, env):
         currentNode = node(env)
         i = 0
@@ -32,8 +30,6 @@ class node:
         self.state = state
         self.action = action
         self.reward = 0
-        self.wins = 0
-        self.loses = 0
         self.visits = 0
         self.children = []
         self.parent = parent
@@ -71,7 +67,6 @@ class node:
                 newState = self.state.createCopy()
                 newState.move(i)
                 newState.currentPlayer *= -1
-                
                 self.children.append(node(newState, i, parent=self))
 
     def propagate(self, reward):
@@ -80,12 +75,6 @@ class node:
         while currentNode.parent != None:
             currentNode = currentNode.parent
             currentNode.visits = int(currentNode.visits + 1)
-            
-            if reward == 1:
-                currentNode.wins += 1
-            elif reward == -1:
-                currentNode.loses += 1
-            
             currentNode.reward += reward
 
     def randomPolicy(self):
@@ -97,10 +86,6 @@ class node:
         
         if done:
             self.reward += reward
-            if reward == 1:
-                self.wins += 1
-            elif reward == -1:
-                self.loses += 1
             self.visits = int(self.visits + 1)
             return reward
         else:
@@ -113,9 +98,5 @@ class node:
                 thisState.currentPlayer *= -1
                 if done:
                     self.reward += reward
-                    if reward == 1:
-                        self.wins += 1
-                    elif reward == -1:
-                        self.loses += 1
                     self.visits = int(self.visits+1)
                     return reward

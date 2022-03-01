@@ -11,6 +11,8 @@ Currently, there is 6 agents that can play the game:
     - randomLegal - agent that knows what moves are legal, and chooses one of them,
     - totalRandom - agent that picks a random place on board,
     - minMax - standard minMax algorithm,
+    - minMaxT - minMax with transposition table,
+    - minMaxTI - minMax with transposition table and iterative deepening,
     - minMaxAB - minMax algorithm with alpha-beta prunning,
     - mcts - Monte carlo tree search.
 
